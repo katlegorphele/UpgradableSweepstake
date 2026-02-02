@@ -23,7 +23,7 @@ export function WinnerSection({ lastWinner, previousWinners }: WinnerSectionProp
       <CardContent className="space-y-4">
         {/* Latest Winner */}
         {lastWinner && (
-          <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-primary/20 via-primary/10 to-transparent p-4">
+          <div className="relative overflow-hidden rounded-xl bg-linear-to-br from-primary/20 via-primary/10 to-transparent p-4">
             <Sparkles className="absolute right-2 top-2 h-5 w-5 text-primary/50" />
             <p className="mb-2 text-xs font-medium text-primary">Latest Winner</p>
             <div className="flex items-center gap-3">
