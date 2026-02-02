@@ -1,0 +1,705 @@
+{
+  "manifestVersion": "3.2",
+  "proxies": [
+    {
+      "address": "0x1408e43C68C1cf5d327b66A104900804341eF22E",
+      "txHash": "0xb7f787215d81f4b358da2f99c9c05874fabf97234dc8eff5eb07b04c857dfa6c",
+      "kind": "uups"
+    }
+  ],
+  "impls": {
+    "85ceeba83aa4592b837cb580225538768f49f793999111b63446e4febe1c8a85": {
+      "address": "0x517bf65c2DD9c73589659467e76368863E99c0F9",
+      "txHash": "0x28a9d2262830457c19134126eebe71488c6afb7243e8bc3dbe1622ee56f1af43",
+      "layout": {
+        "solcVersion": "0.8.28",
+        "storage": [
+          {
+            "label": "roundId",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint256",
+            "contract": "EthRewardPoolUpgradeable",
+            "src": "contracts/SweepStakeV1.sol:30"
+          },
+          {
+            "label": "roundStart",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256",
+            "contract": "EthRewardPoolUpgradeable",
+            "src": "contracts/SweepStakeV1.sol:33"
+          },
+          {
+            "label": "ROUND_DURATION",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_uint256",
+            "contract": "EthRewardPoolUpgradeable",
+            "src": "contracts/SweepStakeV1.sol:36"
+          },
+          {
+            "label": "MIN_CONTRIBUTION",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_uint256",
+            "contract": "EthRewardPoolUpgradeable",
+            "src": "contracts/SweepStakeV1.sol:39"
+          },
+          {
+            "label": "participants",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_array(t_address_payable)dyn_storage",
+            "contract": "EthRewardPoolUpgradeable",
+            "src": "contracts/SweepStakeV1.sol:42"
+          },
+          {
+            "label": "hasJoined",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_mapping(t_address,t_bool)",
+            "contract": "EthRewardPoolUpgradeable",
+            "src": "contracts/SweepStakeV1.sol:45"
+          },
+          {
+            "label": "rewardHistory",
+            "offset": 0,
+            "slot": "6",
+            "type": "t_mapping(t_uint256,t_address_payable)",
+            "contract": "EthRewardPoolUpgradeable",
+            "src": "contracts/SweepStakeV1.sol:48"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "7",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "EthRewardPoolUpgradeable",
+            "src": "contracts/SweepStakeV1.sol:244"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_struct(InitializableStorage)73_storage": {
+            "label": "struct Initializable.InitializableStorage",
+            "members": [
+              {
+                "label": "_initialized",
+                "type": "t_uint64",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "_initializing",
+                "type": "t_bool",
+                "offset": 8,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(OwnableStorage)13_storage": {
+            "label": "struct OwnableUpgradeable.OwnableStorage",
+            "members": [
+              {
+                "label": "_owner",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(PausableStorage)224_storage": {
+            "label": "struct PausableUpgradeable.PausableStorage",
+            "members": [
+              {
+                "label": "_paused",
+                "type": "t_bool",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(ReentrancyGuardStorage)288_storage": {
+            "label": "struct ReentrancyGuardUpgradeable.ReentrancyGuardStorage",
+            "members": [
+              {
+                "label": "_status",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint64": {
+            "label": "uint64",
+            "numberOfBytes": "8"
+          },
+          "t_address_payable": {
+            "label": "address payable",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address_payable)dyn_storage": {
+            "label": "address payable[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_address_payable)": {
+            "label": "mapping(uint256 => address payable)",
+            "numberOfBytes": "32"
+          }
+        },
+        "namespaces": {
+          "erc7201:openzeppelin.storage.Pausable": [
+            {
+              "contract": "PausableUpgradeable",
+              "label": "_paused",
+              "type": "t_bool",
+              "src": "@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol:21",
+              "offset": 0,
+              "slot": "0"
+            }
+          ],
+          "erc7201:openzeppelin.storage.ReentrancyGuard": [
+            {
+              "contract": "ReentrancyGuardUpgradeable",
+              "label": "_status",
+              "type": "t_uint256",
+              "src": "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol:43",
+              "offset": 0,
+              "slot": "0"
+            }
+          ],
+          "erc7201:openzeppelin.storage.Ownable": [
+            {
+              "contract": "OwnableUpgradeable",
+              "label": "_owner",
+              "type": "t_address",
+              "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:24",
+              "offset": 0,
+              "slot": "0"
+            }
+          ],
+          "erc7201:openzeppelin.storage.Initializable": [
+            {
+              "contract": "Initializable",
+              "label": "_initialized",
+              "type": "t_uint64",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:69",
+              "offset": 0,
+              "slot": "0"
+            },
+            {
+              "contract": "Initializable",
+              "label": "_initializing",
+              "type": "t_bool",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:73",
+              "offset": 8,
+              "slot": "0"
+            }
+          ]
+        }
+      }
+    },
+    "8646526772102f9d68cae744b8b7f4deb4edf523949d3f871e65e39d6b4f8e42": {
+      "address": "0x303a0F8362B00f438353E4d6C3b1A2C8F15e6477",
+      "txHash": "0x5dfc3552e0d922baa89dacf43897c93dea2a61ec41af0bfdccf48b204e1144c3",
+      "layout": {
+        "solcVersion": "0.8.28",
+        "storage": [
+          {
+            "label": "roundId",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint256",
+            "contract": "EthRewardPoolUpgradeable",
+            "src": "contracts/SweepStakeV1.sol:30"
+          },
+          {
+            "label": "roundStart",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256",
+            "contract": "EthRewardPoolUpgradeable",
+            "src": "contracts/SweepStakeV1.sol:33"
+          },
+          {
+            "label": "ROUND_DURATION",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_uint256",
+            "contract": "EthRewardPoolUpgradeable",
+            "src": "contracts/SweepStakeV1.sol:36"
+          },
+          {
+            "label": "MIN_CONTRIBUTION",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_uint256",
+            "contract": "EthRewardPoolUpgradeable",
+            "src": "contracts/SweepStakeV1.sol:39"
+          },
+          {
+            "label": "participants",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_array(t_address_payable)dyn_storage",
+            "contract": "EthRewardPoolUpgradeable",
+            "src": "contracts/SweepStakeV1.sol:42"
+          },
+          {
+            "label": "hasJoined",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_mapping(t_address,t_bool)",
+            "contract": "EthRewardPoolUpgradeable",
+            "src": "contracts/SweepStakeV1.sol:45"
+          },
+          {
+            "label": "rewardHistory",
+            "offset": 0,
+            "slot": "6",
+            "type": "t_mapping(t_uint256,t_address_payable)",
+            "contract": "EthRewardPoolUpgradeable",
+            "src": "contracts/SweepStakeV1.sol:48"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "7",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "EthRewardPoolUpgradeable",
+            "src": "contracts/SweepStakeV1.sol:246"
+          },
+          {
+            "label": "MAX_PARTICIPANTS",
+            "offset": 0,
+            "slot": "57",
+            "type": "t_uint256",
+            "contract": "EthRewardPoolUpgradeableV2",
+            "src": "contracts/Sweepstake_V2.sol:20"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "58",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "EthRewardPoolUpgradeableV2",
+            "src": "contracts/Sweepstake_V2.sol:86"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_struct(InitializableStorage)73_storage": {
+            "label": "struct Initializable.InitializableStorage",
+            "members": [
+              {
+                "label": "_initialized",
+                "type": "t_uint64",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "_initializing",
+                "type": "t_bool",
+                "offset": 8,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(OwnableStorage)13_storage": {
+            "label": "struct OwnableUpgradeable.OwnableStorage",
+            "members": [
+              {
+                "label": "_owner",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(PausableStorage)224_storage": {
+            "label": "struct PausableUpgradeable.PausableStorage",
+            "members": [
+              {
+                "label": "_paused",
+                "type": "t_bool",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(ReentrancyGuardStorage)288_storage": {
+            "label": "struct ReentrancyGuardUpgradeable.ReentrancyGuardStorage",
+            "members": [
+              {
+                "label": "_status",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint64": {
+            "label": "uint64",
+            "numberOfBytes": "8"
+          },
+          "t_address_payable": {
+            "label": "address payable",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address_payable)dyn_storage": {
+            "label": "address payable[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_address_payable)": {
+            "label": "mapping(uint256 => address payable)",
+            "numberOfBytes": "32"
+          }
+        },
+        "namespaces": {
+          "erc7201:openzeppelin.storage.Pausable": [
+            {
+              "contract": "PausableUpgradeable",
+              "label": "_paused",
+              "type": "t_bool",
+              "src": "@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol:21",
+              "offset": 0,
+              "slot": "0"
+            }
+          ],
+          "erc7201:openzeppelin.storage.ReentrancyGuard": [
+            {
+              "contract": "ReentrancyGuardUpgradeable",
+              "label": "_status",
+              "type": "t_uint256",
+              "src": "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol:43",
+              "offset": 0,
+              "slot": "0"
+            }
+          ],
+          "erc7201:openzeppelin.storage.Ownable": [
+            {
+              "contract": "OwnableUpgradeable",
+              "label": "_owner",
+              "type": "t_address",
+              "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:24",
+              "offset": 0,
+              "slot": "0"
+            }
+          ],
+          "erc7201:openzeppelin.storage.Initializable": [
+            {
+              "contract": "Initializable",
+              "label": "_initialized",
+              "type": "t_uint64",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:69",
+              "offset": 0,
+              "slot": "0"
+            },
+            {
+              "contract": "Initializable",
+              "label": "_initializing",
+              "type": "t_bool",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:73",
+              "offset": 8,
+              "slot": "0"
+            }
+          ]
+        }
+      }
+    },
+    "a6c871a1d0d75d259ff4b34a2885b1c83c60c1bdb98d8d1dde8634b43c962941": {
+      "address": "0x8d30D5bfD5EbEAaF94c566BC23dC0608BB3c2263",
+      "txHash": "0xaba3e5068125f63fad5675410fd35a1efca365ea71154cbdc8b041467c101e19",
+      "layout": {
+        "solcVersion": "0.8.28",
+        "storage": [
+          {
+            "label": "roundId",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint256",
+            "contract": "EthRewardPoolUpgradeable",
+            "src": "contracts/SweepStakeV1.sol:30"
+          },
+          {
+            "label": "roundStart",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256",
+            "contract": "EthRewardPoolUpgradeable",
+            "src": "contracts/SweepStakeV1.sol:33"
+          },
+          {
+            "label": "ROUND_DURATION",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_uint256",
+            "contract": "EthRewardPoolUpgradeable",
+            "src": "contracts/SweepStakeV1.sol:36"
+          },
+          {
+            "label": "MIN_CONTRIBUTION",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_uint256",
+            "contract": "EthRewardPoolUpgradeable",
+            "src": "contracts/SweepStakeV1.sol:39"
+          },
+          {
+            "label": "participants",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_array(t_address_payable)dyn_storage",
+            "contract": "EthRewardPoolUpgradeable",
+            "src": "contracts/SweepStakeV1.sol:42"
+          },
+          {
+            "label": "hasJoined",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_mapping(t_address,t_bool)",
+            "contract": "EthRewardPoolUpgradeable",
+            "src": "contracts/SweepStakeV1.sol:45"
+          },
+          {
+            "label": "rewardHistory",
+            "offset": 0,
+            "slot": "6",
+            "type": "t_mapping(t_uint256,t_address_payable)",
+            "contract": "EthRewardPoolUpgradeable",
+            "src": "contracts/SweepStakeV1.sol:48"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "7",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "EthRewardPoolUpgradeable",
+            "src": "contracts/SweepStakeV1.sol:246"
+          },
+          {
+            "label": "MAX_PARTICIPANTS",
+            "offset": 0,
+            "slot": "57",
+            "type": "t_uint256",
+            "contract": "EthRewardPoolUpgradeableV2",
+            "src": "contracts/Sweepstake_V2.sol:20"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "58",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "EthRewardPoolUpgradeableV2",
+            "src": "contracts/Sweepstake_V2.sol:86"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "107",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "EthRewardPoolUpgradeableV3",
+            "src": "contracts/Sweepstake_v3.sol:93"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_struct(InitializableStorage)73_storage": {
+            "label": "struct Initializable.InitializableStorage",
+            "members": [
+              {
+                "label": "_initialized",
+                "type": "t_uint64",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "_initializing",
+                "type": "t_bool",
+                "offset": 8,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(OwnableStorage)13_storage": {
+            "label": "struct OwnableUpgradeable.OwnableStorage",
+            "members": [
+              {
+                "label": "_owner",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(PausableStorage)224_storage": {
+            "label": "struct PausableUpgradeable.PausableStorage",
+            "members": [
+              {
+                "label": "_paused",
+                "type": "t_bool",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(ReentrancyGuardStorage)288_storage": {
+            "label": "struct ReentrancyGuardUpgradeable.ReentrancyGuardStorage",
+            "members": [
+              {
+                "label": "_status",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint64": {
+            "label": "uint64",
+            "numberOfBytes": "8"
+          },
+          "t_address_payable": {
+            "label": "address payable",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address_payable)dyn_storage": {
+            "label": "address payable[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_address_payable)": {
+            "label": "mapping(uint256 => address payable)",
+            "numberOfBytes": "32"
+          }
+        },
+        "namespaces": {
+          "erc7201:openzeppelin.storage.Pausable": [
+            {
+              "contract": "PausableUpgradeable",
+              "label": "_paused",
+              "type": "t_bool",
+              "src": "@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol:21",
+              "offset": 0,
+              "slot": "0"
+            }
+          ],
+          "erc7201:openzeppelin.storage.ReentrancyGuard": [
+            {
+              "contract": "ReentrancyGuardUpgradeable",
+              "label": "_status",
+              "type": "t_uint256",
+              "src": "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol:43",
+              "offset": 0,
+              "slot": "0"
+            }
+          ],
+          "erc7201:openzeppelin.storage.Ownable": [
+            {
+              "contract": "OwnableUpgradeable",
+              "label": "_owner",
+              "type": "t_address",
+              "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:24",
+              "offset": 0,
+              "slot": "0"
+            }
+          ],
+          "erc7201:openzeppelin.storage.Initializable": [
+            {
+              "contract": "Initializable",
+              "label": "_initialized",
+              "type": "t_uint64",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:69",
+              "offset": 0,
+              "slot": "0"
+            },
+            {
+              "contract": "Initializable",
+              "label": "_initializing",
+              "type": "t_bool",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:73",
+              "offset": 8,
+              "slot": "0"
+            }
+          ]
+        }
+      }
+    }
+  }
+}
