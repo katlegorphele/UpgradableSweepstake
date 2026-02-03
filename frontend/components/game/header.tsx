@@ -2,7 +2,8 @@
 
 import { Button } from "@/components/ui/button"
 import { useTheme } from "next-themes"
-import { Wallet, Mail, Moon, Sun, Gem } from "lucide-react"
+import { Moon, Sun, Gem } from "lucide-react"
+import { ConnectButton } from "@rainbow-me/rainbowkit"
 
 export function Header() {
   const { theme, setTheme } = useTheme()
@@ -38,16 +39,7 @@ export function Header() {
             <span className="sr-only">Toggle theme</span>
           </Button>
 
-          <Button variant="outline" size="sm" className="hidden gap-2 sm:flex bg-transparent">
-            <Mail className="h-4 w-4" />
-            Login with Email
-          </Button>
-
-          <Button size="sm" className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90">
-            <Wallet className="h-4 w-4" />
-            <span className="hidden sm:inline">Connect Wallet</span>
-            <span className="sm:hidden">Connect</span>
-          </Button>
+          <ConnectButton showBalance={false} chainStatus="icon" />
         </div>
       </div>
     </header>

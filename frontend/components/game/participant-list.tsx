@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Users, Trophy, TrendingUp } from "lucide-react"
+import { Users, TrendingUp, Crown } from "lucide-react"
 import type { Participant } from "@/hooks/use-game-state"
 
 interface ParticipantListProps {
@@ -17,6 +17,12 @@ export function ParticipantList({ participants, highlightWinner }: ParticipantLi
   const sortedParticipants = [...participants].sort(
     (a, b) => parseFloat(b.contribution) - parseFloat(a.contribution)
   )
+
+  // Function to truncate Ethereum address
+  const truncateAddress = (address: string) => {
+    if (!address || address.length < 10) return address
+    return `${address.slice(0, 6)}...${address.slice(-4)}`
+  }
 
   return (
     <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
@@ -53,30 +59,26 @@ export function ParticipantList({ participants, highlightWinner }: ParticipantLi
                     animationDelay: `${index * 50}ms`,
                   }}
                 >
-                  {/* Rank */}
+                  {/* Rank - Simple number or crown for winner
                   <div className="flex h-8 w-8 shrink-0 items-center justify-center">
-                    {index === 0 ? (
-                      <Trophy className="h-5 w-5 text-yellow-500" />
-                    ) : index === 1 ? (
-                      <Trophy className="h-5 w-5 text-gray-400" />
-                    ) : index === 2 ? (
-                      <Trophy className="h-5 w-5 text-amber-600" />
-                    ) : (
-                      <span className="text-sm font-medium text-muted-foreground">
+                    <span className="text-sm font-medium text-muted-foreground">
                         #{index + 1}
                       </span>
-                    )}
-                  </div>
+                  </div> */}
 
                   {/* Avatar */}
                   <Avatar className="h-10 w-10 border-2 border-border">
-                    <AvatarImage src={participant.avatar || "/placeholder.svg"} alt={participant.address} />
-                    <AvatarFallback>{participant.address[0]}</AvatarFallback>
+                    <AvatarImage src={participant.avatar || `/api/avatar/${participant.address}`} alt={participant.address} />
+                    <AvatarFallback>
+                      {truncateAddress(participant.address)}
+                    </AvatarFallback>
                   </Avatar>
 
-                  {/* Name */}
+                  {/* Truncated Address */}
                   <div className="flex-1 min-w-0">
-                    <p className="truncate font-medium">{participant.address}</p>
+                    <p className="truncate font-mono text-sm font-medium">
+                      {truncateAddress(participant.address)}
+                    </p>
                     <p className="text-xs text-muted-foreground">
                       Joined {formatTimeAgo(participant.joinedAt)}
                     </p>
@@ -86,7 +88,7 @@ export function ParticipantList({ participants, highlightWinner }: ParticipantLi
                   <div className="flex items-center gap-1 text-right">
                     <TrendingUp className="h-4 w-4 text-success" />
                     <span className="font-mono font-semibold">
-                      {participant.contribution} ETH
+                      {parseFloat(participant.contribution).toFixed(2)} ETH
                     </span>
                   </div>
                 </div>
@@ -104,5 +106,7 @@ function formatTimeAgo(timestamp: number): string {
   if (seconds < 60) return `${seconds}s ago`
   const minutes = Math.floor(seconds / 60)
   if (minutes < 60) return `${minutes}m ago`
-  return `${Math.floor(minutes / 60)}h ago`
+  const hours = Math.floor(minutes / 60)
+  if (hours < 24) return `${hours}h ago`
+  return `${Math.floor(hours / 24)}d ago`
 }

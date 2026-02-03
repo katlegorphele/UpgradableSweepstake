@@ -1,23 +1,35 @@
-"use client"
+"use client";
 
-import { Header } from "@/components/game/header"
-import { RoundInfo } from "@/components/game/round-info"
-import { JoinPool } from "@/components/game/join-pool"
-import { ParticipantList } from "@/components/game/participant-list"
-import { WinnerSection } from "@/components/game/winner-section"
-import { Footer } from "@/components/game/footer"
-import { Confetti } from "@/components/game/confetti"
-import { WinnerModal } from "@/components/game/winner-modal"
-import { useGameState } from "@/hooks/use-game-state"
+import { Header } from "@/components/game/header";
+import { RoundInfo } from "@/components/game/round-info";
+import { JoinPool } from "@/components/game/join-pool";
+import { ParticipantList } from "@/components/game/participant-list";
+import { WinnerSection } from "@/components/game/winner-section";
+import { Footer } from "@/components/game/footer";
+import { Confetti } from "@/components/game/confetti";
+import { WinnerModal } from "@/components/game/winner-modal";
+import { useGameState } from "@/hooks/use-game-state";
 
 export default function EthRewardPoolPage() {
   const {
     gameState,
     joinPool,
+    isLoading,
     isRoundEnding,
     showWinner,
     currentWinner,
-  } = useGameState()
+  } = useGameState();
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-4">
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+          <p className="text-muted-foreground">Loading pool data...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -41,7 +53,8 @@ export default function EthRewardPoolPage() {
             Win <span className="text-primary">ETH</span> Every Round
           </h1>
           <p className="mx-auto max-w-md text-muted-foreground">
-            Join the pool, stake your ETH, and get a chance to win the entire pool when the round ends!
+            Join the pool, stake your ETH, and get a chance to win the entire
+            pool when the round ends!
           </p>
         </div>
 
@@ -52,21 +65,23 @@ export default function EthRewardPoolPage() {
 
         {/* Main game area */}
         <div className="grid gap-6 lg:grid-cols-3">
-          {/* Left column - Join Pool */}
+          {/* All columns with same min-height */}
           <div className="lg:col-span-1">
-            <JoinPool onJoin={joinPool} isRoundEnding={isRoundEnding} />
+            <JoinPool
+              onJoin={joinPool}
+              isRoundEnding={isRoundEnding}
+              minContribution={gameState.minContribution}
+            />
           </div>
 
-          {/* Middle column - Participants */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 min-h-100">
             <ParticipantList
               participants={gameState.participants}
               highlightWinner={currentWinner?.id}
             />
           </div>
 
-          {/* Right column - Winners */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 min-h-100">
             <WinnerSection
               lastWinner={gameState.lastWinner}
               previousWinners={gameState.previousWinners}
@@ -112,5 +127,5 @@ export default function EthRewardPoolPage() {
       {/* Footer */}
       <Footer />
     </div>
-  )
+  );
 }

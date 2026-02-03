@@ -30,7 +30,7 @@ export function Footer() {
 
           {/* Disclaimer */}
           <p className="text-center text-xs text-muted-foreground">
-            This is a demo app; real blockchain integration coming soon.
+            This is a demo app running on Arbitrum Sepolia.
           </p>
 
           {/* Copyright */}

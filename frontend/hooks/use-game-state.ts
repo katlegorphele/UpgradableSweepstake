@@ -1,6 +1,9 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
+import { useWatchContractEvent } from "wagmi"
+import { POOL_ABI, POOL_CONTRACT_ADDRESS } from "@/lib/contract"
+import { formatEther } from "viem"
 
 export interface Participant {
   id: string
@@ -23,120 +26,249 @@ export interface GameState {
   totalTime: number
   participants: Participant[]
   poolBalance: number
+  minContribution: number
   lastWinner: Winner | null
   previousWinners: Winner[]
 }
 
-const initialParticipants: Participant[] = [
-  { id: "1", address: "0xc0ffee254729296a45a3885639AC7E10F9d54979", avatar: `https://api.dicebear.com/7.x/shapes/svg?seed=${Math.floor(Math.random() * 10000)}`, contribution: "0.02", joinedAt: Date.now() - 60000 },
-  { id: "2", address: "0x999999cf1046e68e36E1aA2E0E07105eDDD1f08E", avatar: `https://api.dicebear.com/7.x/shapes/svg?seed=${Math.floor(Math.random() * 10000)}`, contribution: "0.01", joinedAt: Date.now() - 45000 },
-  { id: "3", address: "0x632113fCADFc585b54DA7b482eda815427EC3e59", avatar: `https://api.dicebear.com/7.x/shapes/svg?seed=${Math.floor(Math.random() * 10000)}`, contribution: "0.03", joinedAt: Date.now() - 30000 },
-]
+interface PoolApiResponse {
+  roundId: number
+  roundStart: number
+  roundDuration: number
+  poolBalance: string
+  participants: string[]
+  paused: boolean
+  minContribution: string
+  maxParticipants: number
+}
 
-const previousWinners: Winner[] = [
-  { address: "0xc0ffee254729296a45a3885639AC7E10F9d54979", avatar: "https://api.dicebear.com/7.x/shapes/svg?seed=0x742d35Cc6634C0532925a3b844Bc454e4438f44e", prize: "0.15", round: 5 },
-  { address: "0x742d35Cc6634C0532925a3b844Bc454e4438d44e", avatar: "https://api.dicebear.com/7.x/shapes/svg?seed=0x742d35Cc6634C0532925a3b844Bc454e4438d44e", prize: "0.12", round: 4 },
-  { address: "0x742d35Cc6634C0532925a3b809Bc454e4438d11e", avatar: "https://api.dicebear.com/7.x/shapes/svg?seed=0x742d35Cc6634C0532925a3b809Bc454e4438d11e", prize: "0.08", round: 3 },
-]
+interface WinnersApiResponse {
+  winners: { address: string; round: number }[]
+  currentRound: number
+}
 
-const ROUND_DURATION = 120 // 2 minutes in seconds
+function addressToAvatar(address: string) {
+  return `https://api.dicebear.com/7.x/shapes/svg?seed=${address}`
+}
+
+async function fetchPoolState(): Promise<PoolApiResponse | null> {
+  try {
+    const res = await fetch("/api/pool")
+    if (!res.ok) return null
+    return res.json()
+  } catch {
+    return null
+  }
+}
+
+async function fetchWinners(): Promise<WinnersApiResponse | null> {
+  try {
+    const res = await fetch("/api/winners")
+    if (!res.ok) return null
+    return res.json()
+  } catch {
+    return null
+  }
+}
 
 export function useGameState() {
   const [gameState, setGameState] = useState<GameState>({
-    roundId: 6,
-    timeRemaining: ROUND_DURATION,
-    totalTime: ROUND_DURATION,
-    participants: initialParticipants,
-    poolBalance: 0.06,
-    lastWinner: { address: "0xc0ffee254729296a45a3885639AC7E10F9d54979", avatar: "https://i.pravatar.cc/40?img=4", prize: "0.15", round: 5 },
-    previousWinners,
+    roundId: 0,
+    timeRemaining: 0,
+    totalTime: 300,
+    participants: [],
+    poolBalance: 0,
+    minContribution: 0,
+    lastWinner: null,
+    previousWinners: [],
   })
 
+  const [isLoading, setIsLoading] = useState(true)
   const [isRoundEnding, setIsRoundEnding] = useState(false)
   const [showWinner, setShowWinner] = useState(false)
   const [currentWinner, setCurrentWinner] = useState<Participant | null>(null)
+  const roundStartRef = useRef(0)
+  const roundDurationRef = useRef(300)
 
-  // Countdown timer
+  // Fetch pool state from API
+  const refreshPoolState = useCallback(async () => {
+    const data = await fetchPoolState()
+    if (!data) return
+
+    roundStartRef.current = data.roundStart
+    roundDurationRef.current = data.roundDuration
+
+    const now = Math.floor(Date.now() / 1000)
+    const roundEnd = data.roundStart + data.roundDuration
+    const timeRemaining = Math.max(0, roundEnd - now)
+
+    const participants: Participant[] = data.participants.map((addr, i) => ({
+      id: `${data.roundId}-${i}`,
+      address: addr,
+      avatar: addressToAvatar(addr),
+      contribution: "", // individual contributions aren't tracked on-chain
+      joinedAt: Date.now() - (data.participants.length - i) * 10000,
+    }))
+
+    setGameState((prev) => ({
+      ...prev,
+      roundId: data.roundId,
+      timeRemaining,
+      totalTime: data.roundDuration,
+      participants,
+      poolBalance: parseFloat(data.poolBalance),
+      minContribution: parseFloat(data.minContribution),
+    }))
+
+    setIsRoundEnding(timeRemaining <= 0)
+  }, [])
+
+  // Fetch winners from API
+  const refreshWinners = useCallback(async () => {
+    const data = await fetchWinners()
+    if (!data || data.winners.length === 0) return
+
+    const winners: Winner[] = data.winners.map((w) => ({
+      address: w.address,
+      avatar: addressToAvatar(w.address),
+      prize: "", // prize amounts aren't stored on-chain per round
+      round: w.round,
+    }))
+
+    setGameState((prev) => ({
+      ...prev,
+      lastWinner: winners[0] ?? prev.lastWinner,
+      previousWinners: winners,
+    }))
+  }, [])
+
+  // Initial fetch
+  useEffect(() => {
+    Promise.all([refreshPoolState(), refreshWinners()]).finally(() => {
+      setIsLoading(false)
+    })
+  }, [refreshPoolState, refreshWinners])
+
+  // Poll pool state every 60 seconds (events handle real-time updates)
+  useEffect(() => {
+    const interval = setInterval(refreshPoolState, 60000)
+    return () => clearInterval(interval)
+  }, [refreshPoolState])
+
+  // Local countdown timer - recomputes from roundStart + roundDuration each tick
   useEffect(() => {
     const timer = setInterval(() => {
-      setGameState((prev) => {
-        if (prev.timeRemaining <= 1) {
-          // Round ended
-          setIsRoundEnding(true)
-          return prev
-        }
-        return {
-          ...prev,
-          timeRemaining: prev.timeRemaining - 1,
-        }
-      })
-    }, 1000)
+      const now = Math.floor(Date.now() / 1000)
+      const roundEnd = roundStartRef.current + roundDurationRef.current
+      const remaining = Math.max(0, roundEnd - now)
 
+      setGameState((prev) => ({ ...prev, timeRemaining: remaining }))
+
+      if (remaining <= 0) {
+        setIsRoundEnding(true)
+      }
+    }, 1000)
     return () => clearInterval(timer)
   }, [])
 
-  // Handle round end
+  // Auto-trigger distributeReward when round timer expires
+  const distributeCalledRef = useRef(false)
   useEffect(() => {
-    if (isRoundEnding && gameState.participants.length > 0) {
-      // Select random winner
-      const winnerIndex = Math.floor(Math.random() * gameState.participants.length)
-      const winner = gameState.participants[winnerIndex]
+    if (isRoundEnding && !distributeCalledRef.current) {
+      distributeCalledRef.current = true
+      fetch("/api/pool/distribute", { method: "POST" })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.error) console.error("Auto-distribute failed:", data.error)
+        })
+        .catch((err) => console.error("Auto-distribute error:", err))
+        .finally(() => {
+          // Allow retry after 10s if the round hasn't advanced
+          setTimeout(() => { distributeCalledRef.current = false }, 10000)
+        })
+    }
+  }, [isRoundEnding])
+
+  // Watch for on-chain ParticipantJoined events -> refresh state
+  useWatchContractEvent({
+    address: POOL_CONTRACT_ADDRESS,
+    abi: POOL_ABI,
+    eventName: "ParticipantJoined",
+    onLogs() {
+      refreshPoolState()
+    },
+  })
+
+  // Watch for on-chain RewardDistributed events -> show winner
+  useWatchContractEvent({
+    address: POOL_CONTRACT_ADDRESS,
+    abi: POOL_ABI,
+    eventName: "RewardDistributed",
+    onLogs(logs) {
+      const log = logs[0]
+      if (!log) return
+
+      const recipient = log.args.recipient as string
+      const amount = log.args.amount as bigint
+      const roundId = log.args.roundId as bigint
+
+      const winner: Participant = {
+        id: `winner-${roundId}`,
+        address: recipient,
+        avatar: addressToAvatar(recipient),
+        contribution: formatEther(amount),
+        joinedAt: Date.now(),
+      }
+
       setCurrentWinner(winner)
       setShowWinner(true)
 
-      // Start new round after 5 seconds
+      const newWinner: Winner = {
+        address: recipient,
+        avatar: addressToAvatar(recipient),
+        prize: formatEther(amount),
+        round: Number(roundId),
+      }
+
       setTimeout(() => {
         setShowWinner(false)
         setCurrentWinner(null)
         setIsRoundEnding(false)
-        
-        const newWinner: Winner = {
-          address: winner.address,
-          avatar: winner.avatar,
-          prize: gameState.poolBalance.toFixed(2),
-          round: gameState.roundId,
-        }
+        refreshPoolState()
+        refreshWinners()
 
         setGameState((prev) => ({
-          roundId: prev.roundId + 1,
-          timeRemaining: ROUND_DURATION,
-          totalTime: ROUND_DURATION,
-          participants: [],
-          poolBalance: 0,
+          ...prev,
           lastWinner: newWinner,
-          previousWinners: [newWinner, ...prev.previousWinners].slice(0, 5),
+          previousWinners: [newWinner, ...prev.previousWinners].slice(0, 10),
         }))
       }, 5000)
-    }
-  }, [isRoundEnding, gameState.participants, gameState.poolBalance, gameState.roundId])
+    },
+  })
 
-  const joinPool = useCallback((address: string, contribution: number) => {
-    const newParticipant: Participant = {
-      id: Date.now().toString(),
-      address,
-      avatar: `https://i.pravatar.cc/40?img=${Math.floor(Math.random() * 70)}`,
-      contribution: contribution.toFixed(2),
-      joinedAt: Date.now(),
-    }
+  // Watch for NewRoundStarted -> refresh state
+  useWatchContractEvent({
+    address: POOL_CONTRACT_ADDRESS,
+    abi: POOL_ABI,
+    eventName: "NewRoundStarted",
+    onLogs() {
+      setIsRoundEnding(false)
+      refreshPoolState()
+    },
+  })
 
-    setGameState((prev) => ({
-      ...prev,
-      participants: [...prev.participants, newParticipant],
-      poolBalance: prev.poolBalance + contribution,
-    }))
-
-    return newParticipant
-  }, [])
-
-  const withdrawReward = useCallback(() => {
-    // Simulated withdrawal
-    return { success: true, message: "Reward claimed successfully!" }
+  // joinPool is now handled by the join-pool component directly via wagmi
+  // This is kept for compatibility but does nothing (tx is on-chain now)
+  const joinPool = useCallback((_address: string, _contribution: number) => {
+    // No-op: actual transaction is sent via useWriteContract in JoinPool component
+    // Pool state will refresh when ParticipantJoined event fires
   }, [])
 
   return {
     gameState,
     joinPool,
-    withdrawReward,
+    refreshPoolState,
+    isLoading,
     isRoundEnding,
     showWinner,
     currentWinner,
