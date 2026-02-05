@@ -1,15 +1,10 @@
-import { createPublicClient, createWalletClient, http } from "viem";
+import { createWalletClient, http } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { arbitrumSepolia } from "viem/chains";
 import { POOL_ABI, POOL_CONTRACT_ADDRESS } from "@/lib/contract";
+import { publicClient } from "@/lib/client";
+import { getContractConstants } from "@/lib/constants-cache";
 import { NextResponse } from "next/server";
-
-const transport = http("https://sepolia-rollup.arbitrum.io/rpc");
-
-const publicClient = createPublicClient({
-  chain: arbitrumSepolia,
-  transport,
-});
 
 export async function POST() {
   const privateKey = process.env.OWNER_PRIVATE_KEY;
@@ -18,14 +13,18 @@ export async function POST() {
   }
 
   try {
-    // Check if round is actually over
-    const [roundStart, roundDuration] = await Promise.all([
-      publicClient.readContract({ address: POOL_CONTRACT_ADDRESS, abi: POOL_ABI, functionName: "roundStart" }),
-      publicClient.readContract({ address: POOL_CONTRACT_ADDRESS, abi: POOL_ABI, functionName: "ROUND_DURATION" }),
-    ]);
+    // ROUND_DURATION is immutable — use cached value
+    const constants = await getContractConstants();
+
+    // Only 1 dynamic read needed
+    const roundStart = await publicClient.readContract({
+      address: POOL_CONTRACT_ADDRESS,
+      abi: POOL_ABI,
+      functionName: "roundStart",
+    });
 
     const now = Math.floor(Date.now() / 1000);
-    const roundEnd = Number(roundStart) + Number(roundDuration);
+    const roundEnd = Number(roundStart) + Number(constants.roundDuration);
 
     if (now < roundEnd) {
       return NextResponse.json(
@@ -39,7 +38,7 @@ export async function POST() {
     const walletClient = createWalletClient({
       account,
       chain: arbitrumSepolia,
-      transport,
+      transport: http("https://sepolia-rollup.arbitrum.io/rpc"),
     });
 
     const hash = await walletClient.writeContract({
