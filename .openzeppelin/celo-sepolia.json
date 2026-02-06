@@ -1,0 +1,335 @@
+{
+  "manifestVersion": "3.2",
+  "proxies": [
+    {
+      "address": "0x72814a29870607c6aB3284252e9C313D6147F19c",
+      "txHash": "0x4aeaa0cdd5e22e184eb87b75538bb7cfc8598de959636c35afe3b50d8789e591",
+      "kind": "uups"
+    }
+  ],
+  "impls": {
+    "d9df57a9d5ae663adce97671c15aba89f7e89d96b4d30dcabe4097566ac5d250": {
+      "address": "0xdb1d875D5e263459bB20d21Bd26c6B3b336C5517",
+      "txHash": "0xab05faaf6abc4cdbe50ae8c7c181dc51b455891037d66544d1bd1de90975edd0",
+      "layout": {
+        "solcVersion": "0.8.28",
+        "storage": [
+          {
+            "label": "roundId",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint256",
+            "contract": "CeloSweepstakeV1",
+            "src": "contracts/CeloSweepstakeV1.sol:41"
+          },
+          {
+            "label": "roundStart",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256",
+            "contract": "CeloSweepstakeV1",
+            "src": "contracts/CeloSweepstakeV1.sol:42"
+          },
+          {
+            "label": "ROUND_DURATION",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_uint256",
+            "contract": "CeloSweepstakeV1",
+            "src": "contracts/CeloSweepstakeV1.sol:43"
+          },
+          {
+            "label": "MAX_PARTICIPANTS",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_uint256",
+            "contract": "CeloSweepstakeV1",
+            "src": "contracts/CeloSweepstakeV1.sol:44"
+          },
+          {
+            "label": "CUSD_TOKEN",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_address",
+            "contract": "CeloSweepstakeV1",
+            "src": "contracts/CeloSweepstakeV1.sol:47"
+          },
+          {
+            "label": "CZAR_TOKEN",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_address",
+            "contract": "CeloSweepstakeV1",
+            "src": "contracts/CeloSweepstakeV1.sol:48"
+          },
+          {
+            "label": "TICKET_PRICE_CELO",
+            "offset": 0,
+            "slot": "6",
+            "type": "t_uint256",
+            "contract": "CeloSweepstakeV1",
+            "src": "contracts/CeloSweepstakeV1.sol:51"
+          },
+          {
+            "label": "TICKET_PRICE_CUSD",
+            "offset": 0,
+            "slot": "7",
+            "type": "t_uint256",
+            "contract": "CeloSweepstakeV1",
+            "src": "contracts/CeloSweepstakeV1.sol:52"
+          },
+          {
+            "label": "TICKET_PRICE_CZAR",
+            "offset": 0,
+            "slot": "8",
+            "type": "t_uint256",
+            "contract": "CeloSweepstakeV1",
+            "src": "contracts/CeloSweepstakeV1.sol:53"
+          },
+          {
+            "label": "poolBalanceCELO",
+            "offset": 0,
+            "slot": "9",
+            "type": "t_uint256",
+            "contract": "CeloSweepstakeV1",
+            "src": "contracts/CeloSweepstakeV1.sol:56"
+          },
+          {
+            "label": "poolBalanceCUSD",
+            "offset": 0,
+            "slot": "10",
+            "type": "t_uint256",
+            "contract": "CeloSweepstakeV1",
+            "src": "contracts/CeloSweepstakeV1.sol:57"
+          },
+          {
+            "label": "poolBalanceCZAR",
+            "offset": 0,
+            "slot": "11",
+            "type": "t_uint256",
+            "contract": "CeloSweepstakeV1",
+            "src": "contracts/CeloSweepstakeV1.sol:58"
+          },
+          {
+            "label": "participants",
+            "offset": 0,
+            "slot": "12",
+            "type": "t_array(t_address_payable)dyn_storage",
+            "contract": "CeloSweepstakeV1",
+            "src": "contracts/CeloSweepstakeV1.sol:61"
+          },
+          {
+            "label": "hasJoined",
+            "offset": 0,
+            "slot": "13",
+            "type": "t_mapping(t_address,t_bool)",
+            "contract": "CeloSweepstakeV1",
+            "src": "contracts/CeloSweepstakeV1.sol:62"
+          },
+          {
+            "label": "participantPaymentToken",
+            "offset": 0,
+            "slot": "14",
+            "type": "t_mapping(t_address,t_address)",
+            "contract": "CeloSweepstakeV1",
+            "src": "contracts/CeloSweepstakeV1.sol:63"
+          },
+          {
+            "label": "rewardHistory",
+            "offset": 0,
+            "slot": "15",
+            "type": "t_mapping(t_uint256,t_struct(WinnerInfo)1816_storage)",
+            "contract": "CeloSweepstakeV1",
+            "src": "contracts/CeloSweepstakeV1.sol:71"
+          },
+          {
+            "label": "manualSwapMode",
+            "offset": 0,
+            "slot": "16",
+            "type": "t_bool",
+            "contract": "CeloSweepstakeV1",
+            "src": "contracts/CeloSweepstakeV1.sol:74"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "17",
+            "type": "t_array(t_uint256)40_storage",
+            "contract": "CeloSweepstakeV1",
+            "src": "contracts/CeloSweepstakeV1.sol:506"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_struct(InitializableStorage)73_storage": {
+            "label": "struct Initializable.InitializableStorage",
+            "members": [
+              {
+                "label": "_initialized",
+                "type": "t_uint64",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "_initializing",
+                "type": "t_bool",
+                "offset": 8,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(OwnableStorage)13_storage": {
+            "label": "struct OwnableUpgradeable.OwnableStorage",
+            "members": [
+              {
+                "label": "_owner",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(PausableStorage)224_storage": {
+            "label": "struct PausableUpgradeable.PausableStorage",
+            "members": [
+              {
+                "label": "_paused",
+                "type": "t_bool",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(ReentrancyGuardStorage)288_storage": {
+            "label": "struct ReentrancyGuardUpgradeable.ReentrancyGuardStorage",
+            "members": [
+              {
+                "label": "_status",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint64": {
+            "label": "uint64",
+            "numberOfBytes": "8"
+          },
+          "t_address_payable": {
+            "label": "address payable",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address_payable)dyn_storage": {
+            "label": "address payable[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)40_storage": {
+            "label": "uint256[40]",
+            "numberOfBytes": "1280"
+          },
+          "t_mapping(t_address,t_address)": {
+            "label": "mapping(address => address)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_struct(WinnerInfo)1816_storage)": {
+            "label": "mapping(uint256 => struct CeloSweepstakeV1.WinnerInfo)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(WinnerInfo)1816_storage": {
+            "label": "struct CeloSweepstakeV1.WinnerInfo",
+            "members": [
+              {
+                "label": "winner",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "prizeAmount",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "timestamp",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "2"
+              }
+            ],
+            "numberOfBytes": "96"
+          }
+        },
+        "namespaces": {
+          "erc7201:openzeppelin.storage.Pausable": [
+            {
+              "contract": "PausableUpgradeable",
+              "label": "_paused",
+              "type": "t_bool",
+              "src": "@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol:21",
+              "offset": 0,
+              "slot": "0"
+            }
+          ],
+          "erc7201:openzeppelin.storage.ReentrancyGuard": [
+            {
+              "contract": "ReentrancyGuardUpgradeable",
+              "label": "_status",
+              "type": "t_uint256",
+              "src": "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol:43",
+              "offset": 0,
+              "slot": "0"
+            }
+          ],
+          "erc7201:openzeppelin.storage.Ownable": [
+            {
+              "contract": "OwnableUpgradeable",
+              "label": "_owner",
+              "type": "t_address",
+              "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:24",
+              "offset": 0,
+              "slot": "0"
+            }
+          ],
+          "erc7201:openzeppelin.storage.Initializable": [
+            {
+              "contract": "Initializable",
+              "label": "_initialized",
+              "type": "t_uint64",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:69",
+              "offset": 0,
+              "slot": "0"
+            },
+            {
+              "contract": "Initializable",
+              "label": "_initializing",
+              "type": "t_bool",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:73",
+              "offset": 8,
+              "slot": "0"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

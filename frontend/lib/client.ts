@@ -1,8 +1,8 @@
 import { createPublicClient, http } from "viem";
-import { arbitrumSepolia } from "viem/chains";
+import { celoSepolia } from "viem/chains";
 
 export const publicClient = createPublicClient({
-  chain: arbitrumSepolia,
-  transport: http("https://sepolia-rollup.arbitrum.io/rpc"),
+  chain: celoSepolia,
+  transport: http("https://forno.celo-sepolia.celo-testnet.org/"),
   batch: { multicall: true },
 });

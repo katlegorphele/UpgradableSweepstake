@@ -3,14 +3,16 @@ import { POOL_ABI, POOL_CONTRACT_ADDRESS } from "./contract";
 
 let cache: {
   roundDuration: bigint;
-  minContribution: bigint;
   maxParticipants: bigint;
+  ticketPriceCelo: bigint;
+  ticketPriceCusd: bigint;
+  ticketPriceCzar: bigint;
 } | null = null;
 
 export async function getContractConstants() {
   if (cache) return cache;
 
-  const [roundDuration, minContribution, maxParticipants] = await Promise.all([
+  const [roundDuration, maxParticipants, ticketPriceCelo, ticketPriceCusd, ticketPriceCzar] = await Promise.all([
     publicClient.readContract({
       address: POOL_CONTRACT_ADDRESS,
       abi: POOL_ABI,
@@ -19,19 +21,31 @@ export async function getContractConstants() {
     publicClient.readContract({
       address: POOL_CONTRACT_ADDRESS,
       abi: POOL_ABI,
-      functionName: "MIN_CONTRIBUTION",
+      functionName: "MAX_PARTICIPANTS",
     }),
     publicClient.readContract({
       address: POOL_CONTRACT_ADDRESS,
       abi: POOL_ABI,
-      functionName: "MAX_PARTICIPANTS",
+      functionName: "TICKET_PRICE_CELO",
+    }),
+    publicClient.readContract({
+      address: POOL_CONTRACT_ADDRESS,
+      abi: POOL_ABI,
+      functionName: "TICKET_PRICE_CUSD",
+    }),
+    publicClient.readContract({
+      address: POOL_CONTRACT_ADDRESS,
+      abi: POOL_ABI,
+      functionName: "TICKET_PRICE_CZAR",
     }),
   ]);
 
   cache = {
     roundDuration: roundDuration as bigint,
-    minContribution: minContribution as bigint,
     maxParticipants: maxParticipants as bigint,
+    ticketPriceCelo: ticketPriceCelo as bigint,
+    ticketPriceCusd: ticketPriceCusd as bigint,
+    ticketPriceCzar: ticketPriceCzar as bigint,
   };
 
   return cache;

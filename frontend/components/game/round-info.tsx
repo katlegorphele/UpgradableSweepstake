@@ -98,8 +98,8 @@ export function RoundInfo({ gameState }: RoundInfoProps) {
             <Coins className="h-4 w-4" />
           </div>
           <div>
-            <p className="text-[11px] text-muted-foreground">Pool</p>
-            <p className="text-sm font-bold">{gameState.poolBalance.toFixed(4)} ETH</p>
+            <p className="text-[11px] text-muted-foreground">Pool (cZAR)</p>
+            <p className="text-sm font-bold">{gameState.poolBalances.czar.toFixed(2)}</p>
           </div>
         </div>
 

@@ -1,9 +1,6 @@
 "use client"
 
 import { useState, useEffect, useCallback, useRef } from "react"
-import { useWatchContractEvent } from "wagmi"
-import { POOL_ABI, POOL_CONTRACT_ADDRESS } from "@/lib/contract"
-import { formatEther } from "viem"
 
 export interface Participant {
   id: string
@@ -20,13 +17,25 @@ export interface Winner {
   round: number
 }
 
+export interface PoolBalances {
+  celo: number
+  cusd: number
+  czar: number
+}
+
+export interface TicketPrices {
+  CELO: bigint
+  CUSD: bigint
+  CZAR: bigint
+}
+
 export interface GameState {
   roundId: number
   timeRemaining: number
   totalTime: number
   participants: Participant[]
-  poolBalance: number
-  minContribution: number
+  poolBalances: PoolBalances
+  ticketPrices: TicketPrices
   lastWinner: Winner | null
   previousWinners: Winner[]
 }
@@ -35,15 +44,23 @@ interface PoolApiResponse {
   roundId: number
   roundStart: number
   roundDuration: number
-  poolBalance: string
+  poolBalances: {
+    celo: string
+    cusd: string
+    czar: string
+  }
   participants: string[]
   paused: boolean
-  minContribution: string
+  ticketPrices: {
+    celo: string
+    cusd: string
+    czar: string
+  }
   maxParticipants: number
 }
 
 interface WinnersApiResponse {
-  winners: { address: string; round: number }[]
+  winners: { address: string; round: number; prizeAmount?: string }[]
   currentRound: number
 }
 
@@ -77,23 +94,36 @@ export function useGameState() {
     timeRemaining: 0,
     totalTime: 300,
     participants: [],
-    poolBalance: 0,
-    minContribution: 0,
+    poolBalances: { celo: 0, cusd: 0, czar: 0 },
+    ticketPrices: { CELO: BigInt(0), CUSD: BigInt(0), CZAR: BigInt(0) },
     lastWinner: null,
     previousWinners: [],
   })
 
   const [isLoading, setIsLoading] = useState(true)
-  const [isRoundEnding, setIsRoundEnding] = useState(false)
+  const [isPaused, setIsPaused] = useState(false)
   const [showWinner, setShowWinner] = useState(false)
   const [currentWinner, setCurrentWinner] = useState<Participant | null>(null)
+
+  // Refs for local countdown
   const roundStartRef = useRef(0)
   const roundDurationRef = useRef(300)
 
-  // Fetch pool state from API
+  // Track if we're currently trying to distribute
+  const isDistributingRef = useRef(false)
+  const lastDistributeAttemptRef = useRef(0)
+
+  // Fetch pool state from API and trigger distribute if needed
   const refreshPoolState = useCallback(async () => {
     const data = await fetchPoolState()
     if (!data) return
+
+    // Handle paused state
+    if (data.paused) {
+      setIsPaused(true)
+      return // Don't process further when paused
+    }
+    setIsPaused(false)
 
     roundStartRef.current = data.roundStart
     roundDurationRef.current = data.roundDuration
@@ -106,7 +136,7 @@ export function useGameState() {
       id: `${data.roundId}-${i}`,
       address: addr,
       avatar: addressToAvatar(addr),
-      contribution: "", // individual contributions aren't tracked on-chain
+      contribution: "",
       joinedAt: Date.now() - (data.participants.length - i) * 10000,
     }))
 
@@ -116,11 +146,50 @@ export function useGameState() {
       timeRemaining,
       totalTime: data.roundDuration,
       participants,
-      poolBalance: parseFloat(data.poolBalance),
-      minContribution: parseFloat(data.minContribution),
+      poolBalances: {
+        celo: parseFloat(data.poolBalances.celo),
+        cusd: parseFloat(data.poolBalances.cusd),
+        czar: parseFloat(data.poolBalances.czar),
+      },
+      ticketPrices: {
+        CELO: BigInt(data.ticketPrices.celo),
+        CUSD: BigInt(data.ticketPrices.cusd),
+        CZAR: BigInt(data.ticketPrices.czar),
+      },
     }))
 
-    setIsRoundEnding(timeRemaining <= 0)
+    // If round has expired, try to trigger distribution
+    if (timeRemaining <= 0 && !isDistributingRef.current) {
+      // Rate limit: only try once every 15 seconds
+      const timeSinceLastAttempt = now - lastDistributeAttemptRef.current
+      if (timeSinceLastAttempt < 15) return
+
+      isDistributingRef.current = true
+      lastDistributeAttemptRef.current = now
+
+      try {
+        console.log("Attempting to distribute reward...")
+        const res = await fetch("/api/pool/distribute", { method: "POST" })
+        const result = await res.json()
+        console.log("Distribute API response:", result)
+
+        if (result.success) {
+          // Distribution succeeded - refresh after tx confirms
+          console.log("Distribution successful! TX:", result.hash)
+          setTimeout(async () => {
+            await refreshPoolState()
+            await refreshWinners()
+            isDistributingRef.current = false
+          }, 3000)
+        } else {
+          console.error("Distribute failed:", result.error || "unknown error")
+          isDistributingRef.current = false
+        }
+      } catch (err) {
+        console.error("Distribute request failed:", err)
+        isDistributingRef.current = false
+      }
+    }
   }, [])
 
   // Fetch winners from API
@@ -131,7 +200,7 @@ export function useGameState() {
     const winners: Winner[] = data.winners.map((w) => ({
       address: w.address,
       avatar: addressToAvatar(w.address),
-      prize: "", // prize amounts aren't stored on-chain per round
+      prize: w.prizeAmount || "",
       round: w.round,
     }))
 
@@ -149,119 +218,30 @@ export function useGameState() {
     })
   }, [refreshPoolState, refreshWinners])
 
-  // Poll pool state every 60 seconds (events handle real-time updates)
+  // Polling interval - 10 seconds normally, 60 seconds when paused
   useEffect(() => {
-    const interval = setInterval(refreshPoolState, 60000)
+    const pollInterval = isPaused ? 60000 : 10000
+    const interval = setInterval(refreshPoolState, pollInterval)
     return () => clearInterval(interval)
-  }, [refreshPoolState])
+  }, [refreshPoolState, isPaused])
 
-  // Local countdown timer - recomputes from roundStart + roundDuration each tick
+  // Local countdown timer
   useEffect(() => {
     const timer = setInterval(() => {
       const now = Math.floor(Date.now() / 1000)
       const roundEnd = roundStartRef.current + roundDurationRef.current
       const remaining = Math.max(0, roundEnd - now)
-
       setGameState((prev) => ({ ...prev, timeRemaining: remaining }))
-
-      if (remaining <= 0) {
-        setIsRoundEnding(true)
-      }
     }, 1000)
     return () => clearInterval(timer)
   }, [])
 
-  // Auto-trigger distributeReward when round timer expires
-  const distributeCalledRef = useRef(false)
-  useEffect(() => {
-    if (isRoundEnding && !distributeCalledRef.current) {
-      distributeCalledRef.current = true
-      fetch("/api/pool/distribute", { method: "POST" })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.error) console.error("Auto-distribute failed:", data.error)
-        })
-        .catch((err) => console.error("Auto-distribute error:", err))
-        .finally(() => {
-          // Allow retry after 10s if the round hasn't advanced
-          setTimeout(() => { distributeCalledRef.current = false }, 10000)
-        })
-    }
-  }, [isRoundEnding])
+  // Derive isRoundEnding from timeRemaining (not stored as state)
+  const isRoundEnding = gameState.timeRemaining <= 0
 
-  // Watch for on-chain ParticipantJoined events -> refresh state
-  useWatchContractEvent({
-    address: POOL_CONTRACT_ADDRESS,
-    abi: POOL_ABI,
-    eventName: "ParticipantJoined",
-    onLogs() {
-      refreshPoolState()
-    },
-  })
-
-  // Watch for on-chain RewardDistributed events -> show winner
-  useWatchContractEvent({
-    address: POOL_CONTRACT_ADDRESS,
-    abi: POOL_ABI,
-    eventName: "RewardDistributed",
-    onLogs(logs) {
-      const log = logs[0]
-      if (!log) return
-
-      const recipient = log.args.recipient as string
-      const amount = log.args.amount as bigint
-      const roundId = log.args.roundId as bigint
-
-      const winner: Participant = {
-        id: `winner-${roundId}`,
-        address: recipient,
-        avatar: addressToAvatar(recipient),
-        contribution: formatEther(amount),
-        joinedAt: Date.now(),
-      }
-
-      setCurrentWinner(winner)
-      setShowWinner(true)
-
-      const newWinner: Winner = {
-        address: recipient,
-        avatar: addressToAvatar(recipient),
-        prize: formatEther(amount),
-        round: Number(roundId),
-      }
-
-      setTimeout(() => {
-        setShowWinner(false)
-        setCurrentWinner(null)
-        setIsRoundEnding(false)
-        refreshPoolState()
-        refreshWinners()
-
-        setGameState((prev) => ({
-          ...prev,
-          lastWinner: newWinner,
-          previousWinners: [newWinner, ...prev.previousWinners].slice(0, 10),
-        }))
-      }, 5000)
-    },
-  })
-
-  // Watch for NewRoundStarted -> refresh state
-  useWatchContractEvent({
-    address: POOL_CONTRACT_ADDRESS,
-    abi: POOL_ABI,
-    eventName: "NewRoundStarted",
-    onLogs() {
-      setIsRoundEnding(false)
-      refreshPoolState()
-    },
-  })
-
-  // joinPool is now handled by the join-pool component directly via wagmi
-  // This is kept for compatibility but does nothing (tx is on-chain now)
+  // joinPool is handled by the join-pool component directly via wagmi
   const joinPool = useCallback((_address: string, _contribution: number) => {
     // No-op: actual transaction is sent via useWriteContract in JoinPool component
-    // Pool state will refresh when ParticipantJoined event fires
   }, [])
 
   return {
@@ -269,6 +249,7 @@ export function useGameState() {
     joinPool,
     refreshPoolState,
     isLoading,
+    isPaused,
     isRoundEnding,
     showWinner,
     currentWinner,

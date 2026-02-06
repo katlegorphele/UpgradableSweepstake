@@ -9,12 +9,14 @@ import { Footer } from "@/components/game/footer";
 import { Confetti } from "@/components/game/confetti";
 import { WinnerModal } from "@/components/game/winner-modal";
 import { useGameState } from "@/hooks/use-game-state";
+import GamePaused from "@/components/paused-screen/game-paused";
 
 export default function EthRewardPoolPage() {
   const {
     gameState,
     joinPool,
     isLoading,
+    isPaused,
     isRoundEnding,
     showWinner,
     currentWinner,
@@ -31,6 +33,15 @@ export default function EthRewardPoolPage() {
     );
   }
 
+  if (isPaused) {
+    return (
+      <div className="flex min-h-screen flex-col bg-background">
+        <GamePaused/>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div className="flex min-h-screen flex-col bg-background">
       {/* Confetti animation */}
@@ -39,7 +50,7 @@ export default function EthRewardPoolPage() {
       {/* Winner modal */}
       <WinnerModal
         winner={currentWinner}
-        poolBalance={gameState.poolBalance}
+        prizeAmount={currentWinner?.contribution || "0"}
         isOpen={showWinner}
       />
 
@@ -50,11 +61,11 @@ export default function EthRewardPoolPage() {
       <main className="container mx-auto flex-1 px-4 py-6">
         <div className="mb-8 text-center">
           <h1 className="mb-2 text-3xl font-bold tracking-tight sm:text-4xl">
-            Win <span className="text-primary">ETH</span> Every Round
+            Win <span className="text-primary">cZAR</span> Every Round
           </h1>
           <p className="mx-auto max-w-md text-muted-foreground">
-            Join the pool, stake your ETH, and get a chance to win the entire
-            pool when the round ends!
+            Join the pool with CELO, cUSD, or cZAR and get a chance to win the
+            prize in cZAR when the round ends!
           </p>
         </div>
 
@@ -68,9 +79,9 @@ export default function EthRewardPoolPage() {
           {/* All columns with same min-height */}
           <div className="lg:col-span-1">
             <JoinPool
-              onJoin={joinPool}
+              onJoin={(address: string, token: string) => joinPool(address, 0)}
               isRoundEnding={isRoundEnding}
-              minContribution={gameState.minContribution}
+              ticketPrices={gameState.ticketPrices}
             />
           </div>
 
@@ -108,7 +119,7 @@ export default function EthRewardPoolPage() {
               </div>
               <h3 className="mb-2 font-semibold">Join the Pool</h3>
               <p className="text-sm text-muted-foreground">
-                Contribute ETH to the pool before the round timer ends.
+                Pay R20 with CELO, cUSD, or cZAR before the round ends.
               </p>
             </div>
             <div className="rounded-xl border border-border/50 bg-card/50 p-6 text-center backdrop-blur-sm">

@@ -1,13 +1,13 @@
 import { getDefaultConfig } from "@rainbow-me/rainbowkit";
-import { arbitrumSepolia } from "wagmi/chains";
+import { celoSepolia } from "wagmi/chains";
 import { http } from "wagmi";
 
 export const config = getDefaultConfig({
-  appName: "EthRewardPool",
+  appName: "CeloSweepstake",
   projectId: process.env.NEXT_PUBLIC_PROJECT_ID || "",
-  chains: [arbitrumSepolia],
+  chains: [celoSepolia],
   transports: {
-    [arbitrumSepolia.id]: http("https://sepolia-rollup.arbitrum.io/rpc"),
+    [celoSepolia.id]: http("https://forno.celo-sepolia.celo-testnet.org/"),
   },
   ssr: true,
 });

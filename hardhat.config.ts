@@ -1,7 +1,7 @@
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
-import '@openzeppelin/hardhat-upgrades';
-import dotenv from 'dotenv';
+import "@openzeppelin/hardhat-upgrades";
+import dotenv from "dotenv";
 
 dotenv.config();
 
@@ -11,23 +11,41 @@ const config: HardhatUserConfig = {
     settings: {
       optimizer: {
         enabled: true,
-        runs: 200
-      }
-    }
+        runs: 200,
+      },
+    },
   },
   networks: {
-    arbitrumSepolia: {  // Changed from 'sepolia' to match etherscan config
-      url: process.env.ARB_SEPOLIA_RPC || "https://sepolia-rollup.arbitrum.io/rpc",
+    arbitrumSepolia: {
+      url:
+        process.env.ARB_SEPOLIA_RPC || "https://sepolia-rollup.arbitrum.io/rpc",
       accounts: [process.env.PRIVATE_KEY ?? ""],
-      chainId: 421614
-    }
+      chainId: 421614,
+    },
+    celoSepolia: {
+      url: "https://forno.celo-sepolia.celo-testnet.org/",
+      accounts: [process.env.PRIVATE_KEY ?? ""],
+    },
   },
   etherscan: {
-    apiKey: process.env.ARBISCAN_API_KEY ?? "",
+    apiKey: {
+      // arbitrumSepolia: process.env.ETHERSCAN_API_KEY ?? "",
+      celoSepolia: process.env.ETHERSCAN_API_KEY ?? "",
+    },
+    customChains: [
+      {
+        network: "celoSepolia",
+        chainId: 11142220,
+        urls: {
+          apiURL: "https://api.etherscan.io/v2/api?chainid=11142220",
+          browserURL: "https://sepolia.celoscan.io",
+        },
+      },
+    ],
   },
   sourcify: {
     enabled: true,
-  }
+  },
 };
 
 export default config;

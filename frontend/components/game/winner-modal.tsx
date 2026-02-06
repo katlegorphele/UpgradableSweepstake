@@ -7,11 +7,11 @@ import type { Participant } from "@/hooks/use-game-state"
 
 interface WinnerModalProps {
   winner: Participant | null
-  poolBalance: number
+  prizeAmount: string
   isOpen: boolean
 }
 
-export function WinnerModal({ winner, poolBalance, isOpen }: WinnerModalProps) {
+export function WinnerModal({ winner, prizeAmount, isOpen }: WinnerModalProps) {
   if (!isOpen || !winner) return null
 
   return (
@@ -53,7 +53,7 @@ export function WinnerModal({ winner, poolBalance, isOpen }: WinnerModalProps) {
           {/* Prize amount */}
           <div className="mb-6 rounded-xl bg-primary/10 p-4">
             <p className="text-sm text-muted-foreground">Prize Won</p>
-            <p className="text-4xl font-bold text-primary">{poolBalance.toFixed(2)} ETH</p>
+            <p className="text-4xl font-bold text-primary">{prizeAmount} cZAR</p>
           </div>
 
           {/* Auto-close message */}

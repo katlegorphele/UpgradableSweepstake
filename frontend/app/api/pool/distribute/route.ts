@@ -1,6 +1,6 @@
 import { createWalletClient, http } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { arbitrumSepolia } from "viem/chains";
+import { celoSepolia } from "viem/chains";
 import { POOL_ABI, POOL_CONTRACT_ADDRESS } from "@/lib/contract";
 import { publicClient } from "@/lib/client";
 import { getContractConstants } from "@/lib/constants-cache";
@@ -37,8 +37,8 @@ export async function POST() {
     const account = privateKeyToAccount(`0x${privateKey.replace(/^0x/, "")}`);
     const walletClient = createWalletClient({
       account,
-      chain: arbitrumSepolia,
-      transport: http("https://sepolia-rollup.arbitrum.io/rpc"),
+      chain: celoSepolia,
+      transport: http("https://forno.celo-sepolia.celo-testnet.org"),
     });
 
     const hash = await walletClient.writeContract({
