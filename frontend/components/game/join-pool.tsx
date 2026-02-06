@@ -235,6 +235,7 @@ export function JoinPool({ onJoin, isRoundEnding, ticketPrices }: JoinPoolProps)
     } else {
       handleJoin()
     }
+    
   }
 
   return (
