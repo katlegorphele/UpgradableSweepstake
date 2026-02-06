@@ -43,12 +43,12 @@ export default function GamePaused() {
 
           {/* Title */}
           <div className="flex flex-col gap-3">
-            <h1 className="text-balance text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-              The Pool is
+            <h1 className="mb-4 text-balance text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+              The el<span className="text-primary">ZAR</span>o Pool is
               <span className="text-primary"> Paused</span>
             </h1>
             <p className="mx-auto max-w-lg text-pretty text-base leading-relaxed text-muted-foreground sm:text-lg">
-              {"We're upgrading the sweepstakes engine to bring you bigger prizes, faster draws, and a smoother experience. Hang tight."}
+              {"We're upgrading the engine to bring you faster draws and a smoother experience. Hang tight."}
             </p>
           </div>
 

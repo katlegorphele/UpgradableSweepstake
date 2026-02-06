@@ -20,7 +20,7 @@ export function Header() {
             <Gem className="h-6 w-6" />
           </div>
           <span className="text-xl font-bold tracking-tight">
-            Eth<span className="text-primary">RewardPool</span>
+            el<span className="text-primary">ZAR</span>o
           </span>
         </div>
 
